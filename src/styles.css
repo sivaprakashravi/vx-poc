@@ -1,0 +1,19 @@
+body {
+    background: #121212;
+    color: #999;
+  }
+  
+  .vx-axis g,
+  .vx-axis line {
+    stroke: #999;
+  }
+  
+  .vx-axis text {
+    fill: #999;
+  }
+  
+  .App {
+    font-family: sans-serif;
+    text-align: center;
+  }
+  
