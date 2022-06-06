@@ -6,20 +6,20 @@ import { Bar } from "@vx/shape";
 import useResizeObserver from "use-resize-observer";
 
 
-const LineChart = ({ data = [] }) => {
+const WaterFall = ({ data = [], xLabel = null, yLabel = null }) => {
     const { ref, width = 1, height = 1 } = useResizeObserver();
 
     // bounds
-    const xMax = width - 120;
+    const xMax = width;
     const yMax = height - 80;
-    const getLetter = (d) => d.letter;
-    const getLetterFrequency = (d) => Number(d.frequency) * 100;
+    const getLabel = (d) => d.d;
+    const getLabelFrequency = (d) => Number(d.v);
+    const maxVal = data.map(d => d.v).reduce((a, b) => a + b);
     const xScale = useMemo(
         () =>
             scaleBand({
                 range: [0, xMax],
-                round: true,
-                domain: data.map(getLetter),
+                domain: data.map(getLabel),
                 padding: 0.4,
             }),
         [xMax],
@@ -28,8 +28,7 @@ const LineChart = ({ data = [] }) => {
         () =>
             scaleLinear({
                 range: [yMax, 0],
-                round: true,
-                domain: [0, Math.max(...data.map(getLetterFrequency))],
+                domain: [0, maxVal],
             }),
         [yMax],
     );
@@ -37,30 +36,35 @@ const LineChart = ({ data = [] }) => {
 
     return (
         <div style={{ width: "100%", height: "100%" }} ref={ref}>
-            <svg width={width} height={height}>
+            <svg width={width} height="500">
                 <Group top={25} left={65}>
-                    <AxisLeft scale={yScale} numTicks={4} label="Miles" />
+                    <AxisLeft scale={yScale} numTicks={4} label={yLabel} />
                     <AxisBottom
                         scale={xScale}
-                        label="Day"
+                        label={xLabel}
                         labelOffset={15}
                         numTicks={5}
                         top={yMax}
                     />
-                    {data.map(d => {
-                        const letter = getLetter(d);
+                    {data.map((d, i) => {
+                        const letter = getLabel(d);
                         const barWidth = xScale.bandwidth();
-                        const barHeight = yMax - yScale(getLetterFrequency(d));
-                        const barX = xScale(letter);
-                        const barY = yMax - barHeight;
+                        const barHeight = yMax - yScale(getLabelFrequency(d));
+                        d.x = xScale(letter);
+                        d.isPositive = barHeight > -1 ? true : false;
+                        d.barHeight = barHeight;
+                        d.y = !i ? yMax - barHeight : data[i-1].y - (barHeight > -1 ? barHeight : 0);
+                        if(i && !data[i-1].isPositive) {
+                            d.y = d.y - data[i-1].barHeight;
+                        }
                         return (
                             <Bar
                                 key={`bar-${letter}`}
-                                x={barX}
-                                y={barY}
+                                x={d.x}
+                                y={d.y}
                                 width={barWidth}
-                                height={barHeight}
-                                fill="red"
+                                height={Math.abs(barHeight)}
+                                fill={barHeight > 0 ? 'green' : 'red'}
                             />
                         );
                     })}
@@ -70,4 +74,4 @@ const LineChart = ({ data = [] }) => {
     );
 };
 
-export default LineChart;
+export default WaterFall;
