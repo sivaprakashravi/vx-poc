@@ -29,3 +29,10 @@ body {
   border-width: 1px 1px 0 1px;
   color: #fff;
 }
+
+.main-stop {
+  stop-color: red;
+}
+.alt-stop {
+  stop-color: green;
+}

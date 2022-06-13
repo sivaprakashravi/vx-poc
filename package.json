@@ -6,9 +6,12 @@
   "main": "src/index.js",
   "dependencies": {
     "@vx/axis": "0.0.198",
+    "@vx/gradient": "^0.0.199",
     "@vx/group": "0.0.198",
+    "@vx/marker": "^0.0.199",
     "@vx/mock-data": "^0.0.199",
     "@vx/scale": "0.0.198",
+    "moment": "^2.29.3",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-scripts": "3.0.1",
